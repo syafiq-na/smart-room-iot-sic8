@@ -17,4 +17,4 @@ Sistem monitoring dan keamanan ruangan pintar berbasis ESP32 (Wokwi) yang mengir
 2. Jalankan dashboard Python lokal di komputer:
    ```bash
    pip install -r dashboard/requirements.txt
-   streamlit run dashboard/app.py
+   py -m streamlit run dashboard/app.py
