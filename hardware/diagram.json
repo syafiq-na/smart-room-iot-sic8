@@ -3,42 +3,81 @@
   "author": "Team Smart Room",
   "editor": "wokwi",
   "parts": [
-    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
-    { "type": "wokwi-pir-motion-sensor", "id": "pir1", "top": -70, "left": -220, "attrs": {} },
-    { "type": "wokwi-photoresistor-sensor", "id": "ldr1", "top": 60, "left": -260, "attrs": {} },
-    { "type": "wokwi-led", "id": "led1", "top": 250, "left": -170, "attrs": { "color": "red" } },
-    { "type": "wokwi-resistor", "id": "r1", "top": 215, "left": -135, "attrs": { "value": "220" } },
-    { "type": "wokwi-buzzer", "id": "bz1", "top": 300, "left": -110, "attrs": { "volume": "0.1" } },
-    { "type": "wokwi-dht22", "id": "dht1", "top": -40, "left": 190, "attrs": { "temperature": "28", "humidity": "60" } },
-    { "type": "board-ssd1306", "id": "oled1", "top": 90, "left": 190, "attrs": { "i2cAddress": "0x3c" } }
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 4.84, "attrs": {} },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir1",
+      "top": -149.6,
+      "left": -170.58,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": 12.8,
+      "left": -344.8,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 152.8,
+      "left": -315.4,
+      "rotate": 270,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 109.85,
+      "left": -251,
+      "rotate": 180,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": 225.9,
+      "left": -261.9,
+      "rotate": 270,
+      "attrs": { "volume": "0.1" }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -86.1,
+      "left": 263.4,
+      "attrs": { "temperature": "28", "humidity": "60" }
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "oled1",
+      "top": 214.34,
+      "left": 163.43,
+      "attrs": { "i2cAddress": "0x3c" }
+    }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
-
-    [ "pir1:VCC", "esp:5V", "red", [] ],
-    [ "pir1:GND", "esp:GND.1", "black", [] ],
-    [ "pir1:OUT", "esp:27", "green", [] ],
-
-    [ "ldr1:VCC", "esp:3V3", "red", [] ],
-    [ "ldr1:GND", "esp:GND.1", "black", [] ],
-    [ "ldr1:AO", "esp:34", "orange", [] ],
-
-    [ "dht1:VCC", "esp:3V3", "red", [] ],
-    [ "dht1:GND", "esp:GND.3", "black", [] ],
-    [ "dht1:SDA", "esp:4", "green", [] ],
-
-    [ "oled1:GND", "esp:GND.3", "black", [] ],
-    [ "oled1:VCC", "esp:3V3", "red", [] ],
-    [ "oled1:SCL", "esp:22", "blue", [] ],
-    [ "oled1:SDA", "esp:21", "purple", [] ],
-
+    [ "pir1:VCC", "esp:5V", "purple", [ "v19.2", "h76.8", "v240" ] ],
+    [ "pir1:GND", "esp:GND.1", "black", [ "h-0.26", "v211.2" ] ],
+    [ "pir1:OUT", "esp:27", "cyan", [ "v9.6", "h105.46", "v172.8" ] ],
+    [ "ldr1:VCC", "esp:3V3", "violet", [ "h177.41" ] ],
+    [ "ldr1:GND", "esp:GND.1", "black", [ "h57.6", "v114.8" ] ],
+    [ "ldr1:AO", "esp:34", "orange", [ "v8.9", "h177.41" ] ],
+    [ "dht1:VCC", "esp:3V3", "violet", [ "h-67.2", "v-38.4", "h-220.8", "v38.4" ] ],
+    [ "dht1:GND", "esp:GND.3", "black", [ "v57.6", "h-201.6" ] ],
+    [ "dht1:SDA", "esp:4", "yellow", [ "v115.2", "h-182.3" ] ],
+    [ "oled1:GND", "esp:GND.3", "black", [ "v-134.4", "h-96" ] ],
+    [ "oled1:VCC", "esp:3V3", "violet", [ "h0.15", "v-230.4", "h-220.8", "v38.4" ] ],
+    [ "oled1:SCL", "esp:22", "blue", [ "v-172.8", "h-114.9" ] ],
+    [ "oled1:SDA", "esp:21", "purple", [ "v-144", "h-124.73" ] ],
     [ "esp:26", "r1:1", "green", [] ],
     [ "r1:2", "led1:A", "green", [] ],
-    [ "led1:C", "esp:GND.1", "black", [] ],
-
-    [ "bz1:1", "esp:GND.1", "black", [] ],
-    [ "bz1:2", "esp:25", "red", [] ]
+    [ "led1:C", "esp:GND.1", "black", [ "v-0.4", "h163.2", "v-28.8" ] ],
+    [ "bz1:1", "esp:GND.1", "black", [ "h67.2", "v-124.8" ] ],
+    [ "bz1:2", "esp:25", "red", [ "v0.4", "h96", "v-163.2" ] ]
   ],
   "dependencies": {}
 }

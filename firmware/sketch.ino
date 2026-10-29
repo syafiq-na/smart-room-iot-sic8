@@ -38,7 +38,7 @@ const unsigned long LED_TAHAN_MS        = 10000;
 const unsigned long INTERVAL_SENSOR_MS  = 2000;   
 const unsigned long INTERVAL_KIRIM_MS   = 5000;   
 const unsigned long INTERVAL_OLED_MS    = 500;    
-const unsigned long INTERVAL_MQTT_MS    = 5000;   
+const unsigned long INTERVAL_MQTT_MS    = 3000;
 const unsigned long INTERVAL_WIFI_MS    = 15000;  
 
 // =====================================================================
@@ -52,7 +52,9 @@ const char*    MQTT_HOST      = "broker.hivemq.com";
 const uint16_t MQTT_PORT      = 1883;
 const char*    MQTT_USER      = "";
 const char*    MQTT_PASS      = "";
-const char*    MQTT_CLIENT_ID = "esp32_smartroom_syafiq_01";
+// Client ID dibuat unik saat boot agar beberapa simulasi Wokwi tidak
+// saling memutus koneksi pada broker publik.
+char mqttClientId[48];
 
 const char* TOPIC_DATA   = "sic8/smartroom/syafiq/data";
 const char* TOPIC_STATUS = "sic8/smartroom/syafiq/status";
@@ -119,6 +121,7 @@ void buzzerNada(int frekuensi) {
 void sambungWiFi() {
   Serial.print("Menghubungkan WiFi");
   WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
   WiFi.begin(WIFI_SSID, WIFI_PASS); // Tanpa channel agar melakukan auto-scan otomatis
   
   unsigned long mulai = millis();
@@ -174,7 +177,7 @@ void sambungMQTT() {
   tCobaMqtt = millis();
 
   Serial.print("Menghubungkan MQTT... ");
-  if (mqtt.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS, TOPIC_STATUS, 0, true, "OFFLINE")) {
+  if (mqtt.connect(mqttClientId, MQTT_USER, MQTT_PASS, TOPIC_STATUS, 0, true, "OFFLINE")) {
     Serial.println("MQTT terhubung ke HiveMQ Broker");
     kirimStatus();
   } else {
@@ -344,15 +347,25 @@ void setup() {
 
   mqtt.setServer(MQTT_HOST, MQTT_PORT);
   mqtt.setBufferSize(512);
+  mqtt.setKeepAlive(30);
+  snprintf(mqttClientId, sizeof(mqttClientId), "esp32_smartroom_%llX",
+           (unsigned long long)ESP.getEfuseMac());
 
   bacaSensor();
   cetakSerial();
   tSensor = millis();
+  tKirim = millis() - INTERVAL_KIRIM_MS;
   tampilOLED();
 }
 
 void loop() {
   unsigned long now = millis();
+
+  // Layani koneksi MQTT sesering mungkin agar keep-alive tidak terlewat
+  // ketika sensor atau output sedang diperbarui.
+  if (mqtt.connected()) {
+    mqtt.loop();
+  }
 
   gerakan = (digitalRead(PIN_PIR) == HIGH);
   if (gerakan) {
@@ -386,12 +399,9 @@ void loop() {
     }
   } else {
     sambungMQTT();
-    if (mqtt.connected()) {
-      mqtt.loop();
-      if (now - tKirim >= INTERVAL_KIRIM_MS) {
-        tKirim = now;
-        kirimData();
-      }
+    if (mqtt.connected() && now - tKirim >= INTERVAL_KIRIM_MS) {
+      tKirim = now;
+      kirimData();
     }
   }
 }
